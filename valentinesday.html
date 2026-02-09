@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Valentine Question</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+<style>
+*{box-sizing:border-box;}
+body{
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+font-family:system-ui;
+overflow:hidden;
+color:white;
+}
+
+/* VIDEO BG */
+video{
+position:fixed;
+width:100%;
+height:100%;
+object-fit:cover;
+z-index:-2;
+filter:brightness(.35);
+}
+
+/* FLOATING HEARTS */
+.hearts span{
+position:fixed;
+bottom:-50px;
+font-size:20px;
+animation:floatUp linear infinite;
+opacity:.8;
+}
+@keyframes floatUp{
+from{transform:translateY(0);}
+to{transform:translateY(-120vh);}
+}
+
+/* CARD */
+.card{
+background:rgba(17,24,39,.75);
+backdrop-filter:blur(14px);
+padding:40px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 20px 60px rgba(0,0,0,.7);
+animation:float 4s ease-in-out infinite;
+}
+
+@keyframes float{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-10px);}
+}
+
+/* SHAKE */
+.shake{animation:shake .4s;}
+@keyframes shake{
+0%{transform:translateX(0);}
+25%{transform:translateX(-8px);}
+50%{transform:translateX(8px);}
+75%{transform:translateX(-6px);}
+100%{transform:translateX(0);}
+}
+
+button{
+margin:10px;
+padding:15px 26px;
+font-size:18px;
+border:none;
+border-radius:999px;
+cursor:pointer;
+font-weight:bold;
+}
+
+#yesBtn{background:#ec4899;color:white;}
+#noBtn{background:#374151;color:white;}
+
+#message{
+margin-top:20px;
+font-size:26px;
+font-weight:bold;
+min-height:40px;
+color:#f9a8d4;
+}
+</style>
+</head>
+
+<body>
+
+<video autoplay muted loop playsinline>
+<source src="https://cdn.coverr.co/videos/coverr-heart-bokeh-1564/1080p.mp4" type="video/mp4">
+</video>
+
+<div class="hearts" id="hearts"></div>
+
+<div class="card" id="card">
+<h1>Tianna Sue-Gaye Elizabeth Palmer ❤️<br>Will you be my valentine?</h1>
+
+<div id="buttons">
+<button id="yesBtn">Yes ❤️</button>
+<button id="noBtn">No 😐</button>
+</div>
+
+<div id="message"></div>
+</div>
+
+<script>
+const card=document.getElementById("card");
+const noBtn=document.getElementById("noBtn");
+const yesBtn=document.getElementById("yesBtn");
+const message=document.getElementById("message");
+const buttons=document.getElementById("buttons");
+const hearts=document.getElementById("hearts");
+
+let noCount=0;
+
+/* FLOATING HEARTS GENERATOR */
+setInterval(()=>{
+const heart=document.createElement("span");
+heart.innerHTML="❤️";
+heart.style.left=Math.random()*100+"vw";
+heart.style.animationDuration=(4+Math.random()*4)+"s";
+hearts.appendChild(heart);
+setTimeout(()=>heart.remove(),8000);
+},600);
+
+/* SHAKE */
+function shakeCard(){
+card.classList.add("shake");
+setTimeout(()=>card.classList.remove("shake"),400);
+}
+
+/* TYPEWRITER */
+function typeText(text){
+message.textContent="";
+let i=0;
+const interval=setInterval(()=>{
+message.textContent+=text[i];
+i++;
+if(i>=text.length)clearInterval(interval);
+},40);
+}
+
+/* CONFETTI */
+function launchConfetti(){
+confetti({particleCount:250,spread:140,origin:{x:0.5,y:0.6}});
+}
+
+/* NO CLICK */
+noBtn.addEventListener("click",()=>{
+noCount++;
+shakeCard();
+
+if(noCount===1){
+typeText("thinking… 😟");
+setTimeout(()=>noBtn.textContent="Are you sure?",900);
+}
+else if(noCount===2){
+typeText("reconsidering… 😭");
+setTimeout(()=>noBtn.textContent="Are you really sure?",900);
+}
+else if(noCount===3){
+typeText("begging… 🥺");
+setTimeout(()=>{
+typeText("please 🥺");
+buttons.innerHTML=`
+<button class="yesFinal">Yes ❤️</button>
+<button class="yesFinal">Yes 😏</button>`;
+document.querySelectorAll(".yesFinal").forEach(btn=>{
+btn.addEventListener("click",()=>{
+typeText("YAYYYY 🎉💖");
+launchConfetti();
+});
+});
+},1000);
+}
+});
+
+/* YES CLICK */
+yesBtn.addEventListener("click",()=>{
+typeText("YAYYYY 🎉💖");
+launchConfetti();
+});
+</script>
+
+</body>
+</html>
